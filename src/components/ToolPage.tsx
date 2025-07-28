@@ -577,7 +577,7 @@ pipeline {
                     if (params.ENVIRONMENT == 'prod') {
                         input message: 'Deploy to production?', ok: 'Deploy'
                     }
-                    sh "kubectl apply -f k8s/${params.ENVIRONMENT}/"
+                    sh "kubectl apply -f k8s/\${params.ENVIRONMENT}/"
                 }
             }
         }
@@ -805,25 +805,60 @@ modules/
 
 # modules/vpc/main.tf
 resource "aws_vpc" "main" {
-  cidr_block           = var.cidr_block
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
   
   tags = {
-    Name = var.name
+    Name = "\${var.name}-vpc"
+  }
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+  
+  tags = {
+    Name = "\${var.name}-igw"
   }
 }
 
 resource "aws_subnet" "public" {
-  count = length(var.public_subnets)
+  count = length(var.public_subnet_cidrs)
   
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnets[count.index]
+  cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   
   tags = {
-    Name = "${var.name}-public-${count.index + 1}"
+    Name = "\${var.name}-public-\${count.index + 1}"
+    Type = "Public"
+  }
+}
+
+resource "aws_subnet" "private" {
+  count = length(var.private_subnet_cidrs)
+  
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  
+  tags = {
+    Name = "\${var.name}-private-\${count.index + 1}"
+    Type = "Private"
+  }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  
+  tags = {
+    Name = "\${var.name}-public-rt"
   }
 }
 
@@ -833,13 +868,18 @@ variable "name" {
   type        = string
 }
 
-variable "cidr_block" {
+variable "vpc_cidr" {
   description = "CIDR block for VPC"
   type        = string
 }
 
-variable "public_subnets" {
+variable "public_subnet_cidrs" {
   description = "List of public subnet CIDR blocks"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "List of private subnet CIDR blocks"
   type        = list(string)
 }
 
@@ -858,9 +898,10 @@ output "public_subnet_ids" {
 module "vpc" {
   source = "./modules/vpc"
   
-  name           = "my-vpc"
-  cidr_block     = "10.0.0.0/16"
-  public_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  name                 = "my-vpc"
+  vpc_cidr             = "10.0.0.0/16"
+  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+  private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
 }
 
 module "web_server" {
@@ -926,7 +967,7 @@ locals {
     ManagedBy   = "Terraform"
   }
   
-  instance_name = "${var.project_name}-${var.environment}-web"
+  instance_name = "\${var.project_name}-\${var.environment}-web"
 }
 
 resource "aws_instance" "web" {

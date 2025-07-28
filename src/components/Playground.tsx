@@ -492,7 +492,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   
   tags = {
-    Name = "${var.project_name}-vpc"
+    Name = "\${var.project_name}-vpc"
   }
 }
 
@@ -500,7 +500,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   
   tags = {
-    Name = "${var.project_name}-igw"
+    Name = "\${var.project_name}-igw"
   }
 }
 
@@ -513,7 +513,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   
   tags = {
-    Name = "${var.project_name}-public-${count.index + 1}"
+    Name = "\${var.project_name}-public-\${count.index + 1}"
     Type = "Public"
   }
 }
@@ -526,7 +526,7 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   
   tags = {
-    Name = "${var.project_name}-private-${count.index + 1}"
+    Name = "\${var.project_name}-private-\${count.index + 1}"
     Type = "Private"
   }
 }
@@ -540,7 +540,7 @@ resource "aws_route_table" "public" {
   }
   
   tags = {
-    Name = "${var.project_name}-public-rt"
+    Name = "\${var.project_name}-public-rt"
   }
 }
 
@@ -605,7 +605,7 @@ resource "aws_eks_cluster" "main" {
 
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.cluster_name}-nodes"
+  node_group_name = "\${var.cluster_name}-nodes"
   node_role_arn   = aws_iam_role.eks_node_group.arn
   subnet_ids      = aws_subnet.private[*].id
   
@@ -630,13 +630,13 @@ resource "aws_eks_node_group" "main" {
   ]
   
   tags = {
-    Name = "${var.cluster_name}-nodes"
+    Name = "\${var.cluster_name}-nodes"
   }
 }
 
 # IAM roles
 resource "aws_iam_role" "eks_cluster" {
-  name = "${var.cluster_name}-cluster-role"
+  name = "\${var.cluster_name}-cluster-role"
   
   assume_role_policy = jsonencode({
     Statement = [{

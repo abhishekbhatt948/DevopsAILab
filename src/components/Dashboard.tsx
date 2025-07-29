@@ -78,7 +78,7 @@ const Dashboard = ({ tools, onToolSelect, onPlayground }) => {
               >
                 <div className="flex items-start space-x-4 mb-4">
                   <div className={`${tool.color} p-3 rounded-lg`}>
-                    {tool.icon}
+                    <tool.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xl font-semibold text-white mb-2">{tool.name}</h4>

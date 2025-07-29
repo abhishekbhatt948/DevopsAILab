@@ -285,7 +285,7 @@ data:
     environment {
         DOCKER_REGISTRY = 'your-registry.com'
         IMAGE_NAME = 'myapp'
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "\\$\{BUILD_NUMBER\}"
     }
     
     stages {
@@ -298,7 +298,7 @@ data:
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    docker.build("\\$\{DOCKER_REGISTRY\}/\\$\{IMAGE_NAME\}:\\$\{IMAGE_TAG\}")
                 }
             }
         }
@@ -306,9 +306,9 @@ data:
         stage('Push to Registry') {
             steps {
                 script {
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'docker-registry-credentials') {
-                        docker.image("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}").push()
-                        docker.image("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}").push('latest')
+                    docker.withRegistry("https://\\$\{DOCKER_REGISTRY\}", 'docker-registry-credentials') {
+                        docker.image("\\$\{DOCKER_REGISTRY\}/\\$\{IMAGE_NAME\}:\\$\{IMAGE_TAG\}").push()
+                        docker.image("\\$\{DOCKER_REGISTRY\}/\\$\{IMAGE_NAME\}:\\$\{IMAGE_TAG\}").push('latest')
                     }
                 }
             }
@@ -317,7 +317,7 @@ data:
         stage('Deploy') {
             steps {
                 sh """
-                    kubectl set image deployment/myapp myapp=${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                    kubectl set image deployment/myapp myapp=\\$\{DOCKER_REGISTRY\}/\\$\{IMAGE_NAME\}:\\$\{IMAGE_TAG\}
                     kubectl rollout status deployment/myapp
                 """
             }
@@ -352,9 +352,9 @@ data:
             steps {
                 script {
                     sh """
-                        sed -i 's|IMAGE_TAG|${params.IMAGE_TAG}|g' k8s/deployment.yaml
-                        kubectl apply -f k8s/ -n ${params.ENVIRONMENT}
-                        kubectl rollout status deployment/myapp -n ${params.ENVIRONMENT}
+                        sed -i 's|IMAGE_TAG|\\$\{params.IMAGE_TAG\}|g' k8s/deployment.yaml
+                        kubectl apply -f k8s/ -n \\$\{params.ENVIRONMENT\}
+                        kubectl rollout status deployment/myapp -n \\$\{params.ENVIRONMENT\}
                     """
                 }
             }
@@ -365,8 +365,8 @@ data:
                 script {
                     sh """
                         sleep 30
-                        kubectl get pods -n ${params.ENVIRONMENT}
-                        kubectl get svc -n ${params.ENVIRONMENT}
+                        kubectl get pods -n \\$\{params.ENVIRONMENT\}
+                        kubectl get svc -n \\$\{params.ENVIRONMENT\}
                     """
                 }
             }
@@ -377,12 +377,12 @@ data:
         success {
             slackSend(channel: '#deployments', 
                      color: 'good', 
-                     message: "✅ Deployment to ${params.ENVIRONMENT} succeeded!")
+                     message: "✅ Deployment to \\$\{params.ENVIRONMENT\} succeeded!")
         }
         failure {
             slackSend(channel: '#deployments', 
                      color: 'danger', 
-                     message: "❌ Deployment to ${params.ENVIRONMENT} failed!")
+                     message: "❌ Deployment to \\$\{params.ENVIRONMENT\} failed!")
         }
     }
 }`
@@ -1353,7 +1353,148 @@ spec:
   };
 
   const runCode = () => {
-    setOutput('Running code...\n\n' + code);
+    if (!code.trim()) {
+      setOutput('⚠️  No code to execute. Please enter some configuration or select an example.');
+      return;
+    }
+
+    // Simulate different outputs based on tool type and code content
+    let simulatedOutput = '';
+    
+    if (tool.id === 'docker') {
+      if (code.includes('FROM')) {
+        simulatedOutput = `🐳 Docker Build Simulation:
+
+Step 1/6 : FROM ${code.match(/FROM\s+(\S+)/)?.[1] || 'base-image'}
+ ---> Using cached image
+Step 2/6 : WORKDIR /app
+ ---> Using cached
+Step 3/6 : COPY package*.json ./
+ ---> Using cached
+Step 4/6 : RUN npm install
+ ---> Running in abc123def456
+Successfully built image
+
+✅ Build completed successfully!`;
+      } else {
+        simulatedOutput = `🐳 Docker Command Simulation:
+
+Executing Docker commands...
+✅ Commands executed successfully!`;
+      }
+    } else if (tool.id === 'kubernetes') {
+      simulatedOutput = `☸️  Kubernetes Deployment Simulation:
+
+deployment.apps/webapp created
+service/webapp-service created
+
+Waiting for deployment to be ready...
+deployment "webapp" successfully rolled out
+
+✅ Resources deployed successfully!`;
+    } else if (tool.id === 'jenkins') {
+      simulatedOutput = `🔧 Jenkins Pipeline Simulation:
+
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] stage (Checkout)
+[Pipeline] git
+✅ Checkout completed
+[Pipeline] stage (Build)
+[Pipeline] sh
++ npm install
+✅ Build completed
+[Pipeline] stage (Test)
+[Pipeline] sh
++ npm test
+✅ Tests passed
+[Pipeline] End of Pipeline
+
+✅ Pipeline completed successfully!`;
+    } else if (tool.id === 'terraform') {
+      simulatedOutput = `🏗️  Terraform Plan Simulation:
+
+Initializing the backend...
+Initializing provider plugins...
+
+Terraform used the selected providers to generate the following execution plan:
+
+  # aws_instance.web will be created
+  + resource "aws_instance" "web" {
+      + ami           = "ami-12345678"
+      + instance_type = "t3.micro"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+✅ Plan generated successfully!`;
+    } else if (tool.id === 'ansible') {
+      simulatedOutput = `⚙️  Ansible Playbook Simulation:
+
+PLAY [Basic Server Setup] ******************************************************
+
+TASK [Update package cache] ****************************************************
+ok: [web1]
+ok: [web2]
+
+TASK [Install basic packages] **************************************************
+changed: [web1]
+changed: [web2]
+
+PLAY RECAP *********************************************************************
+web1                       : ok=2    changed=1    unreachable=0    failed=0
+web2                       : ok=2    changed=1    unreachable=0    failed=0
+
+✅ Playbook executed successfully!`;
+    } else if (tool.id === 'helm') {
+      simulatedOutput = `⎈ Helm Deployment Simulation:
+
+NAME: webapp
+LAST DEPLOYED: ${new Date().toLocaleString()}
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+
+RESOURCES:
+==> v1/Deployment
+NAME     READY  UP-TO-DATE  AVAILABLE  AGE
+webapp   3/3    3           3          1m
+
+==> v1/Service
+NAME            TYPE       CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
+webapp-service  ClusterIP  10.96.123.45   <none>       80/TCP    1m
+
+✅ Chart deployed successfully!`;
+    } else {
+      simulatedOutput = `🚀 Configuration Simulation:
+
+Processing configuration...
+Validating syntax...
+Applying changes...
+
+✅ Configuration applied successfully!`;
+    }
+
+    // Add error simulation for common mistakes
+    if (code.includes('error') || code.includes('wrong') || code.includes('mistake')) {
+      simulatedOutput = `❌ Execution Failed:
+
+Error: Configuration contains issues
+Please check your syntax and try again.
+
+Common issues:
+- Check indentation
+- Verify required fields
+- Ensure proper syntax`;
+    }
+
+    setOutput(`🔄 Simulated Execution Results:
+
+${simulatedOutput}
+
+📝 Note: This is a simulation for learning purposes. 
+In a real environment, this would execute actual ${tool.name} commands.`);
   };
 
   const copyCode = () => {

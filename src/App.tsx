@@ -4,7 +4,7 @@ import ToolPage from './components/ToolPage';
 import SearchResults from './components/SearchResults';
 import GuidesPage from './components/GuidesPage';
 import Playground from './components/Playground';
-import { Search, BookOpen, Code, Play, Home } from 'lucide-react';
+import { Search, BookOpen, Code, Play, Home, Container, Settings, Wrench, Building, Cog, Package, Cloud, BarChart3, Shield } from 'lucide-react';
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -17,7 +17,7 @@ function App() {
       id: 'docker', 
       name: 'Docker', 
       category: 'Containerization', 
-      icon: '🐳', 
+      icon: Container, 
       color: 'bg-blue-500',
       steps: ['Installation', 'Basic Commands', 'Dockerfile', 'Images', 'Containers', 'Volumes', 'Networks', 'Docker Compose', 'Registry', 'Best Practices']
     },
@@ -25,7 +25,7 @@ function App() {
       id: 'kubernetes', 
       name: 'Kubernetes', 
       category: 'Orchestration', 
-      icon: '☸️', 
+      icon: Settings, 
       color: 'bg-blue-600',
       steps: ['Setup', 'Pods', 'Deployments', 'Services', 'ConfigMaps', 'Secrets', 'Ingress', 'Volumes', 'Monitoring', 'Scaling', 'Troubleshooting']
     },
@@ -33,7 +33,7 @@ function App() {
       id: 'jenkins', 
       name: 'Jenkins', 
       category: 'CI/CD', 
-      icon: '🔧', 
+      icon: Wrench, 
       color: 'bg-orange-500',
       steps: ['Installation', 'Configuration', 'Jobs', 'Pipelines', 'Plugins', 'Build Triggers', 'Deployment', 'Integration', 'Security', 'Monitoring', 'Best Practices']
     },
@@ -41,7 +41,7 @@ function App() {
       id: 'terraform', 
       name: 'Terraform', 
       category: 'Infrastructure', 
-      icon: '🏗️', 
+      icon: Building, 
       color: 'bg-purple-500',
       steps: ['Installation', 'Configuration', 'Providers', 'Resources', 'Variables', 'Outputs', 'Modules', 'State Management', 'Planning', 'Apply', 'Destroy']
     },
@@ -49,7 +49,7 @@ function App() {
       id: 'ansible', 
       name: 'Ansible', 
       category: 'Configuration', 
-      icon: '⚙️', 
+      icon: Cog, 
       color: 'bg-red-500',
       steps: ['Installation', 'Inventory', 'Playbooks', 'Tasks', 'Variables', 'Templates', 'Roles', 'Handlers', 'Vault', 'Galaxy', 'Best Practices']
     },
@@ -57,7 +57,7 @@ function App() {
       id: 'helm', 
       name: 'Helm', 
       category: 'Package Manager', 
-      icon: '⎈', 
+      icon: Package, 
       color: 'bg-indigo-500',
       steps: ['Installation', 'Charts', 'Values', 'Templates', 'Dependencies', 'Repositories', 'Releases', 'Hooks', 'Testing', 'Packaging', 'Best Practices']
     },
@@ -65,7 +65,7 @@ function App() {
       id: 'aws', 
       name: 'AWS DevOps', 
       category: 'Cloud', 
-      icon: '☁️', 
+      icon: Cloud, 
       color: 'bg-yellow-500',
       steps: ['Setup', 'CodeCommit', 'CodeBuild', 'CodeDeploy', 'CodePipeline', 'CloudFormation', 'ECS', 'EKS', 'Lambda', 'Monitoring', 'Security']
     },
@@ -73,7 +73,7 @@ function App() {
       id: 'monitoring', 
       name: 'Monitoring', 
       category: 'Observability', 
-      icon: '📊', 
+      icon: BarChart3, 
       color: 'bg-green-500',
       steps: ['Metrics', 'Logging', 'Tracing', 'Alerting', 'Dashboards', 'Prometheus', 'Grafana', 'ELK Stack', 'APM', 'SLI/SLO', 'Incident Response']
     },
@@ -81,7 +81,7 @@ function App() {
       id: 'security', 
       name: 'Security', 
       category: 'DevSecOps', 
-      icon: '🔒', 
+      icon: Shield, 
       color: 'bg-red-600',
       steps: ['Security Scanning', 'Vulnerability Assessment', 'SAST', 'DAST', 'Container Security', 'Secrets Management', 'Compliance', 'Access Control', 'Audit Logging', 'Incident Response', 'Best Practices']
     },

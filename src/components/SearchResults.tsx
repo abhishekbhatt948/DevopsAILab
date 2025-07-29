@@ -38,7 +38,7 @@ const SearchResults = ({ query, results, onToolSelect, onClearSearch }) => {
             >
               <div className="flex items-start space-x-4 mb-4">
                 <div className={`${tool.color} p-3 rounded-lg group-hover:scale-110 transition-transform`}>
-                  {tool.icon}
+                  <tool.icon className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xl font-semibold text-white mb-2">{tool.name}</h4>

@@ -278,7 +278,7 @@ const GuidesPage = ({ tools, onToolSelect, onBack }) => {
               >
                 <div className="flex items-start space-x-4 mb-4">
                   <div className={`${tool.color} p-3 rounded-lg group-hover:scale-110 transition-transform`}>
-                    {tool.icon}
+                    <tool.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold mb-2">{tool.name}</h3>

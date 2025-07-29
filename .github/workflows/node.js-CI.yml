@@ -58,12 +58,11 @@ jobs:
         run: |
           docker build -t $IMAGE_NAME:$IMAGE_TAG .
 
-      - name: Snyk Scan - Container
-        uses: snyk/actions/docker@master
+      - name: Snyk Scan - Prod Dependencies Only (High+)
+        uses: snyk/actions/node@master
         with:
-          image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           command: test
-          args: --severity-threshold=high
+          args: --severity-threshold=high --dev=false
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

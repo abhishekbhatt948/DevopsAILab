@@ -38,6 +38,7 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: test
+          args: --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

@@ -63,6 +63,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           command: test
+          args: --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

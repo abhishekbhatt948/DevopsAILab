@@ -1,4 +1,4 @@
-FROM Node:18-slim
+FROM node:18-slim
 
 RUN useradd -m appuser  
 

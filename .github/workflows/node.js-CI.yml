@@ -91,8 +91,8 @@ jobs:
 
       - name: Ensure ECR Repository Exists
         run: |
-           aws ecr describe-repositories --repository-names ${{ secrets.IMAGE_NAME }} || \
-           aws ecr create-repository --repository-name ${{ secrets.IMAGE_NAME }}
+           aws ecr describe-repositories --repository-names $IMAGE_NAME  || \
+           aws ecr create-repository --repository-name $IMAGE_NAME
              
       - name: Push to AWS ECR
         run: |

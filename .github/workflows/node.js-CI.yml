@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: myapp
+  IMAGE_NAME: DevopsAILabs
   IMAGE_TAG: latest
 
 jobs:
@@ -91,6 +91,6 @@ jobs:
 
       - name: Push to AWS ECR
         run: |
-          ECR_REPO_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com/$IMAGE_NAME
+          ECR_REPO_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com/$IMAGE_NAME
           docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO_URI:$IMAGE_TAG
           docker push $ECR_REPO_URI:$IMAGE_TAG

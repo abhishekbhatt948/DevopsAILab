@@ -14,6 +14,6 @@ RUN chown -R appuser:appuser /home/appuser/app
 
 USER appuser
 
-EXPOSE 3000
+EXPOSE 5173
 
 CMD [ "Node" , "index.js" ]

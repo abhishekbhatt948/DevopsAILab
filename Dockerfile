@@ -16,4 +16,4 @@ USER appuser
 
 EXPOSE 5173
 
-CMD [ "Node" , "index.js" ]
+CMD [ "node" , "index.js" ]

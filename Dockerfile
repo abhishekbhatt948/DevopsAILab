@@ -16,4 +16,4 @@ USER appuser
 
 EXPOSE 5173
 
-CMD [ "node" , "index.js" ]
+CMD [ "node" , "npm run dev" ]

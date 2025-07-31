@@ -1,26 +1,28 @@
-FROM node:20-slim
-
-# Create non-root user
-RUN useradd -m appuser  
+# Stage 1: Build the Vite app
+FROM node:20-alpine as builder
 
 # Set working directory
-WORKDIR /home/appuser/app
+WORKDIR /app
 
 # Copy and install dependencies
 COPY package*.json ./
-RUN npm install --omit-dev
+RUN npm install
 
-# Copy source code
+# Copy source code and build the app
 COPY . .
+RUN npm run build
 
-# Set permissions
-RUN chown -R appuser:appuser /home/appuser/app
+# Stage 2: Serve with NGINX
+FROM nginx:stable-alpine
 
-# Switch to non-root user
-USER appuser
+# Remove default config and copy custom one
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port (adjust based on your app, e.g., Vite uses 5173)
-EXPOSE 5173
+# Copy built static files from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Correct way to run npm script
-CMD ["npm", "run", "dev"]
+# Expose the standard HTTP port
+EXPOSE 80
+
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
